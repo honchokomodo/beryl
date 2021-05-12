@@ -1,0 +1,2 @@
+# beryl
+a discord bot
