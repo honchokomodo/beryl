@@ -7,6 +7,4 @@ the json files are just examples
 
 todo:
 
-add a gitignore
-
 remove the setstat command
