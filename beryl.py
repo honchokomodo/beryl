@@ -14,11 +14,6 @@ prefixes = 'beryl ', 'Beryl ', 'br '
 client = commands.Bot(command_prefix=prefixes)
 # slash = SlashCommand(client)
 status = 'https://youtu.be/QPqf2coKBl8'
-statuswhitelist = [
-    301774808167743489,  # me honchokomodo
-    457024490694508544,  # daniel kirbybomb33
-    762779072098336798,  # james vulpini
-]
 with open('mmmm_a_thicccyyy.json') as mmmm_a_thicccyyy:
     data = json.loads(mmmm_a_thicccyyy.read())
 with open('penis_pleasure_18.json') as sensitive_things:
@@ -122,6 +117,18 @@ async def every_minute():
         f.close()
 
 
+def is_love_in_the_air(percentage):
+    if percentage < 20:
+        return "smells like hatred!"
+    if percentage < 40:
+        return "best stay apart!"
+    if percentage < 60:
+        return "let's stay friends!"
+    if percentage < 85:
+        return "the air buzzes with love!"
+    return "true love is in the air!"
+
+
 @client.event
 async def on_ready():
     print('ready')
@@ -211,17 +218,6 @@ async def edicthelp(ctx):
                    f'disable levelling:\n'
                    r'```beryl edict self update {\"leveltrue\":false}```' + '\n'
                                                                             f'there are more but i am lazy and do not want to write more\n')
-
-
-@client.command(help='(*msg): changes the bot status for whitelisted nerds only')
-async def setstat(ctx, *msg):
-    if ctx.author.id in statuswhitelist:
-        print(f'{ctx.author.name} used setstat with args {msg}')
-        status2 = ''.join([f"{i} " for i in msg])
-        await ctx.send('it should be working')
-        await client.change_presence(activity=discord.Game(status2))
-    else:
-        await ctx.send('you are not whitelisted')
 
 
 class useful_things(commands.Cog):
@@ -395,12 +391,14 @@ class fun_stuff(commands.Cog):
         await channel.send(''.join([f'{i} ' for i in words]))
         await ctx.send(f'{words}')
 
-    @commands.command(help='(person_a, person_b): the love calculator')
-    async def ship(self, ctx, person_a, person_b):
+    @commands.command(help='(person_a, person_b, show_hash=''): the love calculator')
+    async def ship(self, ctx, person_a, person_b, show_hash=''):
         a = person_a + person_b
-        percentage = round(int(sha1(bytes(a, 'utf-8')).hexdigest(), 16) / 2 ** 160 * 100, 2)
-        yeah = 'Love is in the air!' if percentage > 85 else ''
-        await ctx.send(f'Their love is {percentage}%. {yeah}')
+        hashstr = sha1(bytes(a, 'utf-8')).hexdigest()
+        shash = f'\nSHA1 HASH: {hashstr}' if show_hash == 'SHOW_HASH' else ''
+        percentage = round(int(hashstr, 16) / 2 ** 160 * 100, 2)
+        yeah = is_love_in_the_air(percentage)
+        await ctx.send(f'Their love is {percentage}%. {yeah}{shash}')
 
     @ship.error
     async def ship_error(self, ctx, error):
