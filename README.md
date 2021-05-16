@@ -7,4 +7,4 @@ the json files are just examples
 
 todo:
 
-remove the setstat command
+de-ugly the code
