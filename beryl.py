@@ -8,6 +8,7 @@ import time
 import requests
 from hashlib import sha1
 import datetime
+
 # from discord_slash import SlashCommand
 
 prefixes = 'beryl ', 'Beryl ', 'br '
@@ -269,7 +270,11 @@ class useful_things(commands.Cog):
 
     @commands.command(help='(month, day): sends the number of days until something')
     async def daycountdown(self, ctx, month, day):
-        await ctx.send(days_until(int(month), int(day)))
+        month = int(month)
+        monthstr = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'][month - 1]
+        day = int(day)
+        dt = days_until(month, day)
+        await ctx.send(f'{monthstr} {day} is in {dt} days')
 
     @daycountdown.error
     async def daycountdown_error(self, ctx, error):
@@ -423,7 +428,7 @@ class fun_stuff(commands.Cog):
 
     @commands.command(help='(length=16): funne!')
     async def laugh(self, ctx, length=16):
-        laughter = ''.join([random.choice('ASDFGHJKL') for _ in range(min(length, 512))])
+        laughter = ''.join([random.choice('ASDFGHJKL') for _ in range(min(length, 2001))])
         await ctx.send(laughter)
 
     @laugh.error
