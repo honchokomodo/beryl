@@ -8,3 +8,5 @@ the json files are just examples
 todo:
 
 de-ugly the code
+
+add type hinting?
