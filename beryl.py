@@ -113,9 +113,14 @@ async def every_minute():
         cooldown = {}
         await cele()
 
+
+async def every_hour():
+    while not client.is_closed():
+        await asyncio.sleep(3600)
         f = open('mmmm_a_thicccyyy.json', 'w')
         f.write(json.dumps(data, indent=2))
         f.close()
+        print('saved')
 
 
 def is_love_in_the_air(percentage):
@@ -451,4 +456,5 @@ class fun_stuff(commands.Cog):
 client.add_cog(useful_things(client))
 client.add_cog(fun_stuff(client))
 client.loop.create_task(every_minute())
+client.loop.create_task(every_hour())
 client.run(keys['botkey'])
