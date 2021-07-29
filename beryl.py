@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import os
 import json
 import asyncio
 import random
@@ -169,7 +170,7 @@ async def on_message(message):
                 print(data[guild_id])
             except KeyError:
                 print('could not find the guild. making one')
-                data.update({guild_id: {"name": message.guild.name, "leveltrue": True}})
+                data.update({guild_id: {"name": message.guild.name, "leveltrue": False}})
             print('could not find a list of users. making one')
             data[guild_id].update({"users": {}})
         print('could not find the user. making one')
@@ -229,6 +230,24 @@ async def edicthelp(ctx):
 class useful_things(commands.Cog):
     def __init__(self, bot):
         self.client = bot
+
+    @commands.command(help='(): converts video files to mp4')
+    async def ffmpegcve(self, ctx):
+        url = ctx.message.attachments[0].url
+        await ctx.send('downloading...')
+        r = requests.get(url)
+        os.system('touch video')
+        with open('video', 'wb') as v:
+            v.write(r.content)
+        await ctx.send('converting to mp4...')
+        os.system('ffmpeg -i video ffmpeg.mp4 -y')
+        os.system('rm video')
+        await ctx.send('sending...')
+        await ctx.send(file=discord.File(r'ffmpeg.mp4'))
+    
+    @ffmpegcve.error
+    async def ffmpegcve_error(self, ctx, error):
+        await ctx.send(error)
 
     @commands.command(help='(): lists upcoming events')
     async def events(self, ctx):
