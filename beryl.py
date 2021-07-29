@@ -413,13 +413,6 @@ class fun_stuff(commands.Cog):
     def __init__(self, bot):
         self.client = bot
 
-    @commands.command(help='(channel_id, words): sends words to a specific channel')
-    async def send_(self, ctx, channel_id, *words):
-        channel = client.get_channel(int(channel_id))
-        print(f'{ctx.author.id} used send_ with args {words}')
-        await channel.send(''.join([f'{i} ' for i in words]))
-        await ctx.send(f'{words}')
-
     @commands.command(help='(person_a, person_b, show_hash=''): the love calculator')
     async def ship(self, ctx, person_a, person_b, show_hash=''):
         a = person_a + person_b
@@ -458,18 +451,6 @@ class fun_stuff(commands.Cog):
     @laugh.error
     async def laugh_error(self, ctx, error):
         await ctx.send(error)
-
-    @commands.command(help='(victim): boop!')
-    async def boop(self, ctx, victim):
-        numstring = int(victim[3:-1])
-        victim = await client.fetch_user(numstring)
-        await victim.send(f'from {ctx.author.name}: Boop!')
-        await ctx.send(f'{victim.name} has been booped!')
-
-    @boop.error
-    async def boop_error(self, ctx, error):
-        await ctx.send(f'you did not boop anyone!\n'
-                       f'{error}')
 
 
 client.add_cog(useful_things(client))
