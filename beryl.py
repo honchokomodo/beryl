@@ -248,6 +248,24 @@ class useful_things(commands.Cog):
     @ffmpegcve.error
     async def ffmpegcve_error(self, ctx, error):
         await ctx.send(error)
+    
+    @commands.command(help='(): converts audio files to mp3')
+    async def ffmpegcae(self, ctx):
+        url = ctx.message.attachments[0].url
+        await ctx.send('downloading...')
+        r = requests.get(url)
+        os.system('touch audio')
+        with open('audio', 'wb') as v:
+            v.write(r.content)
+        await ctx.send('converting to mp3...')
+        os.system('ffmpeg -i audio ffmpeg.mp3 -y')
+        os.system('rm audio')
+        await ctx.send('sending...')
+        await ctx.send(file=discord.File(r'ffmpeg.mp3'))
+    
+    @ffmpegcae.error
+    async def ffmpegcae_error(self, ctx, error):
+        await ctx.send(error)
 
     @commands.command(help='(): lists upcoming events')
     async def events(self, ctx):
