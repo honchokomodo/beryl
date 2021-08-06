@@ -7,6 +7,7 @@ import random
 import math
 import time
 import requests
+import re
 from hashlib import sha1
 import datetime
 
@@ -265,6 +266,30 @@ class useful_things(commands.Cog):
     
     @ffmpegcae.error
     async def ffmpegcae_error(self, ctx, error):
+        await ctx.send(error)
+        
+    @commands.command(help='(): downloads tiktok videos and sends it')
+    async def youtubedltte(self, ctx, url):
+        ttfilter = re.compile(r'https:\/\/vm.tiktok.com\/\w+\/')
+        if re.match(url):
+            await ctx.send('downloading...')
+            os.system(f'youtube-dl {url} -o youtubedl.mp4')
+            for i in range(4):
+                await ctx.send(f'sending... try: {i}')
+                try:
+                    await ctx.send(file=discord.File(r'youtubedl.mp4'))
+                    os.system('rm youtubedl.mp4')
+                    return
+                except:
+                    await ctx.send('video file too large. scaling down')
+                    os.system('ffmpeg -i youtubedl.mp4 youtubedl.mp4 -vf scale=(iw/2)+mod(iw,2):(ih/2)+mod(ih,2) -y')
+            ctx.send('could not send video')
+            os.system('rm youtubedl.mp4')
+        else:
+            ctx.send(r'link does not match regex `https:\/\/vm.tiktok.com\/\w+\/`. video was not downloaded')
+    
+    @youtubedltte.error
+    async def youtubedltte_error(self, ctx, error):
         await ctx.send(error)
 
     @commands.command(help='(): lists upcoming events')
