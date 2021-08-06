@@ -253,7 +253,7 @@ class useful_things(commands.Cog):
     @commands.command(help='(): downloads tiktok videos and sends it')
     async def youtubedltte(self, ctx, url):
         ttfilter = re.compile(r'https:\/\/vm.tiktok.com\/\w+\/')
-        if re.match(url):
+        if ttfilter.match(url):
             await ctx.send('downloading...')
             os.system(f'youtube-dl {url} -o youtubedl.mp4')
             for i in range(4):
