@@ -265,10 +265,10 @@ class useful_things(commands.Cog):
                 except:
                     await ctx.send('video file too large. scaling down')
                     os.system('ffmpeg -i youtubedl.mp4 youtubedl.mp4 -vf scale=(iw/2)+mod(iw,2):(ih/2)+mod(ih,2) -y')
-            ctx.send('could not send video')
+            await ctx.send('could not send video')
             os.system('rm youtubedl.mp4')
         else:
-            ctx.send(r'link does not match regex `https:\/\/vm.tiktok.com\/\w+\/`. video was not downloaded')
+            await ctx.send(r'link does not match regex `https:\/\/vm.tiktok.com\/\w+\/`. video was not downloaded')
     
     @youtubedltte.error
     async def youtubedltte_error(self, ctx, error):
