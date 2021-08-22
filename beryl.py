@@ -49,10 +49,10 @@ async def givexp(message):
         try:
             channel = client.get_channel(int(data[guild_id]["levelchannel"]))
             await channel.send(
-                f'congrats {message.author.mention} you are now level {post_level} with {post_xp} xp')
+                f'congrats **{message.author.name}** you are now level **{post_level}** with **{post_xp}** xp')
         except KeyError:
             await message.channel.send(
-                f'congrats {message.author.mention} you are now level {post_level} with {post_xp} xp')
+                f'congrats **{message.author.name}** you are now level **{post_level}** with **{post_xp}** xp')
     try:
         levelroles2 = data[guild_id]["levelroles"]
         for roleid in levelroles2:
