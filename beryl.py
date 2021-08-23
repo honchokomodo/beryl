@@ -331,9 +331,9 @@ class useful_things(commands.Cog):
 
     @commands.command(help='(): the lagometer, often lies')
     async def ping(self, ctx):
-        t = await ctx.send(f'from client.latency: {round(client.latency * 1000)}')
+        t = await ctx.send(f'from client.latency: {round(client.latency * 1000)} (this number will probably be inaccurate)')
         ms = (t.created_at - ctx.message.created_at).total_seconds() * 1000
-        await ctx.send(f'from message.created_at: {round(ms)}')
+        await ctx.send(f'from message.created_at: {round(ms)}. disclaimer: this command only gets my (honchokomodo) ping')
 
     @commands.command(help='(path, action, value): does json things')
     async def edict(self, ctx, path, action, *value):
