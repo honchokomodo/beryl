@@ -63,7 +63,7 @@ async def givexp(message):
         levelroles2 = data[guild_id]["levelroles"]
         for roleid in levelroles2:
             role = message.guild.get_role(int(roleid))
-            if post_level > levelroles2[roleid]:
+            if post_level >= levelroles2[roleid]:
                 await message.author.add_roles(role)
             else:
                 await message.author.remove_roles(role)
@@ -468,10 +468,10 @@ class fun_stuff(commands.Cog):
     async def sex_error(self, ctx, error):
         await ctx.send(error)
 
-    @commands.command(help='(*args): just says things')
-    async def say(self, ctx, *args):
-        print(f'{ctx.author.name} used say with args {args}')
-        await ctx.send(''.join([f'{i} ' for i in args]))
+    @commands.command(help='(things): just says things')
+    async def say(self, ctx, things):
+        print(f'{ctx.author.name} used say with arg {things}')
+        await ctx.send(things.replace('@', ''))
 
     @say.error
     async def say_error(self, ctx, error):
