@@ -406,7 +406,8 @@ class useful_things(commands.Cog):
     @commands.command(help='(): prints your level')
     async def level(self, ctx):
         xp = data[f"{ctx.guild.id}"]["users"][f'{ctx.author.id}']["xp"]
-        await ctx.send(f'you are level {math.floor(math.log(xp, 1.1))} with {xp} xp')
+        lv = math.floor(math.log(xp, 1.1))
+        await ctx.send(f'you are level {lv} with {xp} xp. you need {1.1 ** (lv + 1) - lv} more xp to level up')
 
     @commands.command(help='(path, action=print): hypixel api things. action can also be \"keys\"')
     async def dump_count(self, ctx, path, action='print'):
