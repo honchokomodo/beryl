@@ -166,7 +166,7 @@ async def on_message(message):
     author_id = f'{message.author.id}'
 
     try:
-        print(data[guild_id]["users"][author_id])
+        print(f'{time.time()}: {data[guild_id]["users"][author_id]}')
         data[guild_id].update({"name": message.guild.name})
         data[guild_id]["users"][author_id].update({"name": message.author.name})
     except KeyError:
