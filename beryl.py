@@ -240,7 +240,9 @@ class useful_things(commands.Cog):
     
     @commands.command(help='(): save userdata')
     async def write(self, ctx):
-        assert ctx.author.id == 301774808167743489 #THIS IS HORRIBLE CHANGE THIS ASAP
+        if ctx.author.id != 301774808167743489: # THIS IS HORRIBLE CHANGE THIS ASAP
+            await ctx.send('you are not the bot host')
+            return
         f = open('mmmm_a_thicccyyy.json', 'w')
         f.write(json.dumps(data, indent=2))
         f.close()
