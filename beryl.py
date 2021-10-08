@@ -10,6 +10,10 @@ import requests
 import re
 from hashlib import sha1
 import datetime
+from dotenv import load_dotenv
+
+load_dotenv() # Create a .env file and store all Tokens, API keys, and other sensitive info there. 
+
 
 # from discord_slash import SlashCommand
 
