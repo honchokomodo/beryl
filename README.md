@@ -12,3 +12,5 @@ change daycountdown to datetimedelta
 de-ugly the code
 
 add type hinting?
+
+remove dependency security vulnerability in Pipfile.lock notification
