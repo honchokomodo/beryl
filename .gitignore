@@ -5,3 +5,7 @@ ffmpeg.mp4
 youtubedl.mp4
 node*
 package*
+.dccache
+.env
+.vscode
+.idea
