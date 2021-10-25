@@ -28,13 +28,6 @@ with open('penis_pleasure_18.json') as sensitive_things:
 cooldown = {}
 countcooldown = 0
 countresponse = {}
-sexsuccessresponses = [
-    'You have successfully fucked {}! You were very submissive and breedable',
-    'Ou la la! You successfully sexed {}! You were so breedable you bore their twins!'
-]
-sexfailureresponses = [
-    'You did not fuck {}. You were too dominant and unbreedable'
-]
 
 async def givexp(message):
     guild_id = f'{message.guild.id}'
@@ -480,6 +473,13 @@ class fun_stuff(commands.Cog):
 
     @commands.command(help='(person): the sex calculator')
     async def sex(self, ctx, person):
+        sexsuccessresponses = [
+            'You have successfully fucked {}! You were very submissive and breedable',
+            'Ou la la! You successfully sexed {}! You were so breedable you bore their twins!'
+        ]
+        sexfailureresponses = [
+            'You did not fuck {}. You were too dominant and unbreedable'
+        ]
         if random.randint(0, 1):
             await ctx.send(random.choice(sexsuccessresponses).format(person))
         else:
