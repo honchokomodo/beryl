@@ -270,25 +270,20 @@ class useful_things(commands.Cog):
         
     @commands.command(help='(): downloads tiktok videos and sends it')
     async def youtubedltte(self, ctx, url):
-        ttfilter = re.compile(r'https:\/\/vm.tiktok.com\/\w+\/')
+        ttfilter = re.compile(r'^https:\/\/vm.tiktok.com\/\w+\/$')
         if ttfilter.match(url):
             await ctx.send('downloading...')
             os.system(f'youtube-dl {url} -o youtubedl.mp4')
-            for i in range(4):
-                await ctx.send(f'sending... try: {i}')
-                try:
-                    await ctx.send(file=discord.File(r'youtubedl.mp4'))
-                    os.system('rm youtubedl.mp4')
-                    return
-                except:
-                    await ctx.send('video file too large. scaling down')
-                    os.system('ffmpeg -i youtubedl.mp4 youtubedlt.mp4 -vf scale="(iw/2)+mod(iw,2):(ih/2)+mod(ih,2)" -y')
-                    os.system('rm youtubedl.mp4')
-                    os.system('mv youtubedlt.mp4 youtubedl.mp4')
-            await ctx.send('could not send video')
+            file_size = os.path.getsize('youtubedl.mp4')
+            await ctx.send(f'file size: {file_size} max 8000000')
+            if file_size > 8000000:
+                await ctx.send('didnt even try sending video. file too big')
+            else:
+                await ctx.send('sending...')
+                await ctx.send(file=discord.File(r'youtubedl.mp4'))
             os.system('rm youtubedl.mp4')
         else:
-            await ctx.send(r'link does not match regex `https:\/\/vm.tiktok.com\/\w+\/`. video was not downloaded')
+            await ctx.send(r'link does not match regex `^https:\/\/vm.tiktok.com\/\w+\/$`. video was not downloaded')
     
     @youtubedltte.error
     async def youtubedltte_error(self, ctx, error):
