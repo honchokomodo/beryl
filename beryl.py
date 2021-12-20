@@ -235,6 +235,74 @@ class useful_things(commands.Cog):
     def __init__(self, bot):
         self.client = bot
     
+    @commands.command(help='(val, unit, unewt): convert units to other units')
+    async def uconv(self, ctx, val, unit, unewt):
+        val = float(val)
+        ucf = {
+            "in": [lambda a: 0.0254 * a, lambda a: a * 39.37008]
+            "ft": []
+            "yd": []
+            "mi": []
+            "mm": []
+            "cm": []
+            "m": []
+            "km": []
+            "lbs": []
+            "tons": []
+            "g": []
+            "kg": []
+            "tonnes": []
+            "f": []
+            "c": []
+            "k": []
+            "rad": []
+            "deg": []
+            "tsp_au": []
+            "tsp_nz": []
+            "tsp_ca": []
+            "tsp_uk": []
+            "tsp_us": []
+            "tbsp_au": []
+            "tbsp_nz": []
+            "tbsp_ca": []
+            "tbsp_uk": []
+            "tbsp_us": []
+            "oz_au": []
+            "oz_nz": []
+            "oz_ca": []
+            "oz_uk": []
+            "oz_us": []
+            "cup_au": []
+            "cup_nz": []
+            "cup_ca": []
+            "cup_uk": []
+            "cup_us": []
+            "pint_au": []
+            "pint_nz": []
+            "pint_ca": []
+            "pint_uk": []
+            "pint_us": []
+            "quart_au": []
+            "quart_nz": []
+            "quart_ca": []
+            "quart_uk": []
+            "quart_us": []
+            "gallon_au": []
+            "gallon_nz": []
+            "gallon_ca": []
+            "gallon_uk": []
+            "gallon_us": []
+            "ml": []
+            "l": []
+        }
+    
+    @commands.command(help='(scr): run python')
+    async def evalp(self, ctx, scr):
+        if ctx.author.id != 301774808167743489: # THIS IS HORRIBLE CHANGE THIS ASAP
+            await ctx.send('you are not the bot host')
+            return
+        await ctx.send(eval(scr)) # DEAR GOD
+    
     @commands.command(help='(): save userdata')
     async def write(self, ctx):
         if ctx.author.id != 301774808167743489: # THIS IS HORRIBLE CHANGE THIS ASAP
