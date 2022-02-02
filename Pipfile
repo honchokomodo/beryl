@@ -4,11 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"discord.py" = "*"
+py-cord = {version = "==2.0.0b1", extras = ["voice"]}
+aiohttp = "*"
+orjson = "*"
+aiodns = "*"
+brotlipy = "*"
+cchardet = "*"
 python-dotenv = "*"
+uvloop = "*"
 requests = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.10"
