@@ -3,6 +3,8 @@ import math
 import random
 import time
 import orjson
+import asyncio
+import uvloop
 
 with open('mmmm_a_thicccyyy.json') as mmmm_a_thicccyyy:
     data = orjson.loads(mmmm_a_thicccyyy.read())
@@ -54,6 +56,8 @@ class xpUtils(commands.Cog):
                     await ctx.author.remove_roles(role)
         except KeyError:
             pass
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     
     @commands.Cog.listener()
     async def on_message(self, ctx):
@@ -100,3 +104,9 @@ class xpUtils(commands.Cog):
                 await utils.givexp(ctx)
 
         await self.bot.process_commands(ctx)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+        
+def setup(bot):
+    bot.add_cog(xpUtils(bot))

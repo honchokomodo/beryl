@@ -6,6 +6,9 @@ import os
 import datetime
 import time
 import math
+import re
+import asyncio
+import uvloop
 
 with open('mmmm_a_thicccyyy.json') as mmmm_a_thicccyyy:
     data = orjson.loads(mmmm_a_thicccyyy.read())
@@ -41,10 +44,16 @@ class usefulThings(commands.Cog):
         f.close()
         print('saved')
         await ctx.send('saved')
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
     
     @write.error
     async def write_error(self, ctx, error):
         await ctx.send(error)
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(): converts video files to mp4')
     async def ffmpegcve(self, ctx):
@@ -59,10 +68,16 @@ class usefulThings(commands.Cog):
         os.system('rm video')
         await ctx.send('sending...')
         await ctx.send(file=discord.File(r'ffmpeg.mp4'))
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
     
     @ffmpegcve.error
     async def ffmpegcve_error(self, ctx, error):
         await ctx.send(error)
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
         
     @commands.command(help='(): downloads tiktok videos and sends it')
     async def youtubedltte(self, ctx, url):
@@ -80,10 +95,16 @@ class usefulThings(commands.Cog):
             os.system('rm youtubedl.mp4')
         else:
             await ctx.send(r'link does not match regex `^https:\/\/vm.tiktok.com\/\w+\/$`. video was not downloaded')
+            
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
     
     @youtubedltte.error
     async def youtubedltte_error(self, ctx, error):
         await ctx.send(error)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(): lists upcoming events')
     async def events(self, ctx):
@@ -94,10 +115,16 @@ class usefulThings(commands.Cog):
             printable.append(
                 f'{n:>3} -> in {days_until(i["month"], i["day"]):>4} days on {i["month"]:>2}/{i["day"]:<2}: {i["name"]}\n')
         await ctx.send(f'```cs\n{"".join(printable)}\n```')
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @events.error
     async def events_error(self, ctx, error):
         await ctx.send(error)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(): initializes the event list for you')
     async def events_setup(self, ctx):
@@ -108,6 +135,9 @@ class usefulThings(commands.Cog):
             data[f'{ctx.guild.id}'].update({'events': {}})
             await ctx.send(f'events entry added to dict. access with:\n'
                            f'```beryl edict events print 0```')
+            
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(
         help='(month, day, name, *desc): adds an entry to the events list. one on entry per user, can be bypassed by edict')
@@ -124,9 +154,15 @@ class usefulThings(commands.Cog):
                        f'```\n'
                        f'if this info is wrong then redo the command with whatever changes you need')
 
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+
     @events_update.error
     async def events_update_error(self, ctx, error):
         await ctx.send(error)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(month, day): sends the number of days until something')
     async def daycountdown(self, ctx, month, day):
@@ -135,16 +171,25 @@ class usefulThings(commands.Cog):
         day = int(day)
         dt = days_until(month, day)
         await ctx.send(f'{monthstr} {day} is in {dt} days')
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @daycountdown.error
     async def daycountdown_error(self, ctx, error):
         await ctx.send(error)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(): the lagometer, often lies')
     async def ping(self, ctx):
         t = await ctx.send(f'from client.latency: {round(self.bot.latency * 1000)} (this number will probably be inaccurate)')
         ms = (t.created_at - ctx.message.created_at).total_seconds() * 1000
         await ctx.send(f'from message.created_at: {round(ms)}. disclaimer: this command only gets my (honchokomodo) ping')
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(path, action, value): does json things')
     async def edict(self, ctx, path, action, *value):
@@ -185,10 +230,16 @@ class usefulThings(commands.Cog):
 
         except Exception as e:
             await(ctx.send(e))
+            
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @edict.error
     async def edict_error(self, ctx, error):
         await ctx.send(error)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(num=10): the leaderboard')
     async def top(self, ctx, num=10):
@@ -204,9 +255,13 @@ class usefulThings(commands.Cog):
             printable.append(f"{n:>3} -> {i['name'][:20]:^20} | Level {le:>3} | {i['xp']:>10} xp\n")
         await ctx.send(f'```cs\n{"".join(printable)}\nthanks to Vedant36 for the help!```')
 
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
     @top.error
     async def top_error(self, ctx, error):
         await ctx.send(error)
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
     @commands.command(help='(): prints your level')
     async def level(self, ctx):
@@ -214,12 +269,16 @@ class usefulThings(commands.Cog):
         lv = math.floor(math.log(xp, 1.1))
         dt = math.floor(1.1 ** (lv + 1) - xp)
         await ctx.send(f'you are level {lv} with {xp} xp. you need {dt} more xp (around {dt/1100000} mins/msgs) to level up')
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(path, action=print): hypixel api things. action can also be \"keys\"')
     async def dump_count(self, ctx, path, action='print'):
         global countresponse, countcooldown
 
         if time.time() >= countcooldown + 60:
+            # please use aiohttp for this instead
             r = requests.get('https://api.hypixel.net/counts?key=' + keys['hypixelapikey'])
             countcooldown = time.time()
             countresponse = orjson.loads(r.text)
@@ -241,10 +300,16 @@ class usefulThings(commands.Cog):
             response = [i for i in a_key[pathlist[-1]]]
 
         await ctx.send(f'```json\n{orjson.dumps(response, indent=2)}\n```')
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @dump_count.error
     async def dump_count_error(self, ctx, error):
         await ctx.send(error)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
         
 def setup(bot):
     bot.add_cog(usefulThings(bot))

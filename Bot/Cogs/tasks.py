@@ -2,6 +2,8 @@ from discord.ext import commands, tasks
 import asyncio
 import orjson
 import datetime
+import asyncio
+import uvloop
 
 with open('mmmm_a_thicccyyy.json') as mmmm_a_thicccyyy:
     data = orjson.loads(mmmm_a_thicccyyy.read())
@@ -53,6 +55,9 @@ class tasksUtils(commands.Cog):
                     data[vi]['events'][vii]['passed'] = days_until(data[vi]['events'][vii]['month'], data[vi]['events'][vii]['day']) == 0
             except KeyError:
                 pass
+            
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
     @tasks.loop()   
     async def every_minute(self):
         global cooldown
@@ -62,6 +67,9 @@ class tasksUtils(commands.Cog):
             cooldown = {}
             tasks = tasksUtils()
             await tasks.cele()
+            
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @tasks.loop()
     async def every_hour(self):
@@ -71,6 +79,9 @@ class tasksUtils(commands.Cog):
             f.write(orjson.dumps(data, indent=2))
             f.close()
             print('saved')
+            
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
             
 def setup(bot):
     bot.add_cog(tasksUtils(bot))

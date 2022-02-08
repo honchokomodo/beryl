@@ -1,6 +1,8 @@
 from discord.ext import commands
 import random
 from hashlib import sha1
+import uvloop
+import asyncio
 
 def is_love_in_the_air(percentage):
     if percentage < 20:
@@ -25,6 +27,9 @@ class fun_stuff(commands.Cog):
         percentage = round(int(hashstr, 16) / 2 ** 160 * 100, 2)
         yeah = is_love_in_the_air(percentage)
         await ctx.send(f'Their love is {percentage}%. {yeah}{shash}')
+        
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
     @commands.command(name="sex", help='(person): the sex calculator')
@@ -40,41 +45,61 @@ class fun_stuff(commands.Cog):
             await ctx.send(random.choice(sexsuccessresponses).format(person))
         else:
             await ctx.send(random.choice(sexfailureresponses).format(person))
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
     
     @commands.command(help='(things): just says things')
     async def say(self, ctx, things):
         print(f'{ctx.author.name} used say with arg {things}')
         await ctx.send(things.replace('@', ''))
-        
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
     @commands.command(help='(length=16): funne!')
     async def laugh(self, ctx, length=16):
         laughter = ''.join([random.choice('ASDFGHJKL') for _ in range(min(length, 2001))])
         await ctx.send(laughter)
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @commands.command(help='(floor, ceil): sends a random int between floor and ceil')
     async def randint(self, ctx, floor, ceil):
         await ctx.send(random.randint(int(floor), int(ceil)))
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
         
     @say.error
     async def say_error(self, ctx, error):
         await ctx.send(error)
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @sex.error
     async def sex_error(self, ctx, error):
         await ctx.send(error)
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @randint.error
     async def randint_error(self, ctx, error):
         await ctx.send(error)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
     @laugh.error
     async def laugh_error(self, ctx, error):
         await ctx.send(error)
         
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+        
     @ship.error
     async def ship_error(self, ctx, error):
         await ctx.send(error)
+        
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
         
 def setup(bot):
     bot.add_cog(fun_stuff(bot))

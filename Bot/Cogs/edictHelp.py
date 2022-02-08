@@ -1,5 +1,7 @@
 import discord
 from discord.ext import commands
+import asyncio
+import uvloop
 
 class edictHelpClass(commands.Cog):
     def __init__(self, bot):
@@ -41,6 +43,8 @@ class edictHelpClass(commands.Cog):
         there are more but i am lazy and do not want to write more
         """
         await ctx.send(embed=embed)
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
         
 def setup(bot):
     bot.add_cog(edictHelpClass(bot))

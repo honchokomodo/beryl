@@ -13,6 +13,17 @@ prefixes = 'beryl ', 'Beryl ', 'br '
 client = commands.Bot(command_prefix=prefixes)
 status = 'https://youtu.be/QPqf2coKBl8'
 
+# Loads all Cogs
+initial_extensions = [
+    "Cogs.edictHelp",
+    "Cogs.fun-stuff",
+    "Cogs.tasks",
+    "Cogs.useful-things",
+    "Cogs.xp"
+]
+for extension in initial_extensions:
+    client.load_extension(extension)
+
 @client.event
 async def on_ready():
     print('ready')
