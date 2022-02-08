@@ -14,3 +14,5 @@ de-ugly the code
 add type hinting?
 
 remove dependency security vulnerability in Pipfile.lock notification
+
+Change from json storage to db storage???

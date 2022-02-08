@@ -1,7 +1,33 @@
 import requests
 from discord.ext import commands
+import orjson
+import discord
+import os
+import datetime
+import time
+import math
 
-class useful_things(commands.Cog):
+with open('mmmm_a_thicccyyy.json') as mmmm_a_thicccyyy:
+    data = orjson.loads(mmmm_a_thicccyyy.read())
+with open('penis_pleasure_18.json') as sensitive_things:
+    keys = orjson.loads(sensitive_things.read())
+    
+def days_until(month, day):
+        try:
+            today = datetime.date.today()
+            year = today.year
+            dt = datetime.date(year, month, day) - today
+            if 0 <= dt.days:
+                return dt.days
+            return (datetime.date(year + 1, month, day) - today).days
+        except TypeError:
+            return 999
+        
+cooldown = {}
+countcooldown = 0
+countresponse = {}
+
+class usefulThings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
@@ -11,7 +37,7 @@ class useful_things(commands.Cog):
             await ctx.send('you are not the bot host')
             return
         f = open('mmmm_a_thicccyyy.json', 'w')
-        f.write(json.dumps(data, indent=2))
+        f.write(orjson.dumps(data, indent=2))
         f.close()
         print('saved')
         await ctx.send('saved')
@@ -94,7 +120,7 @@ class useful_things(commands.Cog):
         entry.update({'month': int(month), 'day': int(day), 'name': name, 'on_start': ''.join(desc2), 'passed': False})
         await ctx.send(f'event entry populated with data\n'
                        f'```json\n'
-                       f'{json.dumps(entry, indent=2)}\n'
+                       f'{orjson.dumps(entry, indent=2)}\n'
                        f'```\n'
                        f'if this info is wrong then redo the command with whatever changes you need')
 
@@ -116,7 +142,7 @@ class useful_things(commands.Cog):
 
     @commands.command(help='(): the lagometer, often lies')
     async def ping(self, ctx):
-        t = await ctx.send(f'from client.latency: {round(client.latency * 1000)} (this number will probably be inaccurate)')
+        t = await ctx.send(f'from client.latency: {round(self.bot.latency * 1000)} (this number will probably be inaccurate)')
         ms = (t.created_at - ctx.message.created_at).total_seconds() * 1000
         await ctx.send(f'from message.created_at: {round(ms)}. disclaimer: this command only gets my (honchokomodo) ping')
 
@@ -138,16 +164,16 @@ class useful_things(commands.Cog):
             if action == 'print':
                 return await ctx.send(a_key[pathlist[-1]])
             if action == 'dumps':
-                return await ctx.send(f'```json\n{json.dumps(a_key[pathlist[-1]], indent=2)}\n```')
+                return await ctx.send(f'```json\n{orjson.dumps(a_key[pathlist[-1]], indent=2)}\n```')
             if action == 'keys':
                 return await ctx.send([i for i in a_key[pathlist[-1]]])
             if action == 'type':
                 return await ctx.send(type(a_key[pathlist[-1]]))
             if action == 'update' and perm:
-                a_key[pathlist[-1]].update(json.loads(value))
+                a_key[pathlist[-1]].update(orjson.loads(value))
                 return await ctx.send('aight dude')
             if action == 'append' and perm:
-                a_key[pathlist[-1]].append(json.loads(value))
+                a_key[pathlist[-1]].append(orjson.loads(value))
                 return await ctx.send('aight dude')
             if action == 'pop' and perm:
                 if type(a_key) == dict:
@@ -196,7 +222,7 @@ class useful_things(commands.Cog):
         if time.time() >= countcooldown + 60:
             r = requests.get('https://api.hypixel.net/counts?key=' + keys['hypixelapikey'])
             countcooldown = time.time()
-            countresponse = json.loads(r.text)
+            countresponse = orjson.loads(r.text)
 
         pathlist = path.split('>')
         a_key = countresponse
@@ -214,8 +240,11 @@ class useful_things(commands.Cog):
         if action == 'keys':
             response = [i for i in a_key[pathlist[-1]]]
 
-        await ctx.send(f'```json\n{json.dumps(response, indent=2)}\n```')
+        await ctx.send(f'```json\n{orjson.dumps(response, indent=2)}\n```')
 
     @dump_count.error
     async def dump_count_error(self, ctx, error):
         await ctx.send(error)
+        
+def setup(bot):
+    bot.add_cog(usefulThings(bot))
