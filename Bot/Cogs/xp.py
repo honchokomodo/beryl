@@ -1,36 +1,39 @@
-from discord.ext import commands
+import asyncio
 import math
 import random
 import time
-import orjson
-import asyncio
-import uvloop
 
-with open('mmmm_a_thicccyyy.json') as mmmm_a_thicccyyy:
+import orjson
+import uvloop
+from discord.ext import commands
+
+with open("mmmm_a_thicccyyy.json") as mmmm_a_thicccyyy:
     data = orjson.loads(mmmm_a_thicccyyy.read())
-    
+
 cooldown = {}
 countcooldown = 0
 countresponse = {}
 
+
 class xpUtils(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
-        
+
     async def givexp(self, ctx):
-        guild_id = f'{ctx.guild.id}'
-        author_id = f'{ctx.author.id}'
+        guild_id = f"{ctx.guild.id}"
+        author_id = f"{ctx.author.id}"
         try:
             int(data[guild_id]["users"][author_id]["xp"])
         except ValueError:
-            print('it is not a number or something')
+            print("it is not a number or something")
             return
 
         pre_level = math.floor(math.log(data[guild_id]["users"][author_id]["xp"], 1.1))
         try:
             if author_id not in cooldown[guild_id]:
-                data[guild_id]["users"][author_id]["xp"] += random.randint(1000000, 1200000)
+                data[guild_id]["users"][author_id]["xp"] += random.randint(
+                    1000000, 1200000
+                )
                 cooldown[guild_id].append(author_id)
         except KeyError:
             data[guild_id]["users"][author_id]["xp"] += random.randint(1000000, 1200000)
@@ -42,10 +45,12 @@ class xpUtils(commands.Cog):
                 # Probably not a good idea to send level up                # If you are getting the bot verifed on discords.bots.gg
                 channel = self.bot.get_channel(int(data[guild_id]["levelchannel"]))
                 await channel.send(
-                    f'congrats **{ctx.author.name}** you are now level **{post_level}** with **{post_xp}** xp')
+                    f"congrats **{ctx.author.name}** you are now level **{post_level}** with **{post_xp}** xp"
+                )
             except KeyError:
                 await ctx.channel.send(
-                    f'congrats **{ctx.author.name}** you are now level **{post_level}** with **{post_xp}** xp')
+                    f"congrats **{ctx.author.name}** you are now level **{post_level}** with **{post_xp}** xp"
+                )
         try:
             levelroles2 = data[guild_id]["levelroles"]
             for roleid in levelroles2:
@@ -56,9 +61,9 @@ class xpUtils(commands.Cog):
                     await ctx.author.remove_roles(role)
         except KeyError:
             pass
-        
+
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    
+
     @commands.Cog.listener()
     async def on_message(self, ctx):
         global cooldown
@@ -69,11 +74,11 @@ class xpUtils(commands.Cog):
             return
 
         try:
-            guild_id = f'{ctx.guild.id}'
+            guild_id = f"{ctx.guild.id}"
         except AttributeError:
             await self.bot.process_commands(ctx)
             return
-        author_id = f'{ctx.author.id}'
+        author_id = f"{ctx.author.id}"
 
         try:
             print(f'{time.time()}: {data[guild_id]["users"][author_id]}')
@@ -86,12 +91,16 @@ class xpUtils(commands.Cog):
                 try:
                     print(data[guild_id])
                 except KeyError:
-                    print('could not find the guild. making one')
-                    data.update({guild_id: {"name": ctx.guild.name, "leveltrue": False}})
-                print('could not find a list of users. making one')
+                    print("could not find the guild. making one")
+                    data.update(
+                        {guild_id: {"name": ctx.guild.name, "leveltrue": False}}
+                    )
+                print("could not find a list of users. making one")
                 data[guild_id].update({"users": {}})
-            print('could not find the user. making one')
-            data[guild_id]["users"].update({author_id: {"name": ctx.author.name, "xp": 1}})
+            print("could not find the user. making one")
+            data[guild_id]["users"].update(
+                {author_id: {"name": ctx.author.name, "xp": 1}}
+            )
         decision = data[guild_id]["leveltrue"]
         try:
             if ctx.channel.id in data[guild_id]["nolevels"]:
@@ -104,9 +113,9 @@ class xpUtils(commands.Cog):
                 await utils.givexp(ctx)
 
         await self.bot.process_commands(ctx)
-        
+
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-        
+
 def setup(bot):
     bot.add_cog(xpUtils(bot))

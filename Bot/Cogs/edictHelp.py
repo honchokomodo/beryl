@@ -1,13 +1,18 @@
-import discord
-from discord.ext import commands
 import asyncio
+
+import discord
 import uvloop
+from discord.commands import slash_command
+from discord.ext import commands
+
 
 class edictHelpClass(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
-    @commands.command(name="edicthelp")
+
+    @slash_command(
+        name="edicthelp", description="Info for Edict", guild_ids=[978909341665079366]
+    )
     async def edicthelp(self, ctx):
         embed = discord.Embed()
         embed.description = """
@@ -42,9 +47,10 @@ class edictHelpClass(commands.Cog):
         ```beryl edict self update {\"leveltrue\":false}```\n
         there are more but i am lazy and do not want to write more
         """
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
+
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-        
+
 def setup(bot):
     bot.add_cog(edictHelpClass(bot))
