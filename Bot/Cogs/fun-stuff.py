@@ -1,42 +1,57 @@
 import asyncio
+import logging
 import random
 from hashlib import sha1
 
 import uvloop
+from discord.commands import Option, slash_command
 from discord.ext import commands
 
-
-def is_love_in_the_air(percentage):
-    if percentage < 20:
-        return "smells like hatred!"
-    if percentage < 40:
-        return "best stay apart!"
-    if percentage < 60:
-        return "let's stay friends!"
-    if percentage < 85:
-        return "the air buzzes with love!"
-    return "true love is in the air!"
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(levelname)s] | %(asctime)s >> %(message)s",
+    datefmt="[%m/%d/%Y] [%I:%M:%S %p %Z]",
+)
 
 
 class fun_stuff(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(
-        name="ship", help="(person_a, person_b, show_hash=" "): the love calculator"
+    @slash_command(
+        name="ship",
+        description="Calcuates how much love a person has",
+        guild_ids=[978909341665079366],
     )
-    async def ship(self, ctx, person_a, person_b, show_hash=""):
+    async def shipPerson(
+        self,
+        ctx,
+        person_a: Option(str, "The person who you would want to ship with"),
+        person_b: Option(str, "The person you would want to ship with"),
+    ):
         a = person_a + person_b
         hashstr = sha1(bytes(a, "utf-8")).hexdigest()
-        shash = f"\nSHA1 HASH: {hashstr}" if show_hash == "SHOW_HASH" else ""
         percentage = round(int(hashstr, 16) / 2**160 * 100, 2)
-        yeah = is_love_in_the_air(percentage)
-        await ctx.send(f"Their love is {percentage}%. {yeah}{shash}")
+        if percentage < 20:
+            lovePercentage = "smells like hatred!"
+        elif percentage < 40:
+            lovePercentage = "best stay apart!"
+        elif percentage < 60:
+            lovePercentage = "let's stay friends!"
+        elif percentage < 85:
+            lovePercentage = "the air buzzes with love!"
+        else:
+            lovePercentage = "true love is in the air!"
+        await ctx.respond(f"Their love is {percentage}%. {lovePercentage}")
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @commands.command(name="sex", help="(person): the sex calculator")
-    async def sex(self, ctx, person):
+    @slash_command(
+        name="sex", description="it's a sex calculator", guild_ids=[978909341665079366]
+    )
+    async def havingSex(
+        self, ctx, person: Option(str, "The person who would want to be submissive")
+    ):
         sexsuccessresponses = [
             "You have successfully fucked {}! You were very submissive and breedable",
             "Ou la la! You successfully sexed {}! You were so breedable you bore their twins!",
@@ -45,61 +60,37 @@ class fun_stuff(commands.Cog):
             "You did not fuck {}. You were too dominant and unbreedable"
         ]
         if random.randint(0, 1):
-            await ctx.send(random.choice(sexsuccessresponses).format(person))
+            await ctx.respond(random.choice(sexsuccessresponses).format(person))
         else:
-            await ctx.send(random.choice(sexfailureresponses).format(person))
+            await ctx.respond(random.choice(sexfailureresponses).format(person))
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @commands.command(help="(things): just says things")
-    async def say(self, ctx, things):
-        print(f"{ctx.author.name} used say with arg {things}")
-        await ctx.send(things.replace("@", ""))
+    @slash_command(
+        name="say", description="Says something", guild_ids=[978909341665079366]
+    )
+    async def sayTheWord(self, ctx, things: Option(str, "The word or phrase to say")):
+        logging.info(f"{ctx.author.name} used say with arg {things}")
+        await ctx.respond(things.replace("@", ""))
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @commands.command(help="(length=16): funne!")
-    async def laugh(self, ctx, length=16):
+    @slash_command(name="laugh", description="Laughs", guild_ids=[978909341665079366])
+    async def laughingAtSomeone(self, ctx, length=16):
         laughter = "".join(
             [random.choice("ASDFGHJKL") for _ in range(min(length, 2001))]
         )
-        await ctx.send(laughter)
+        await ctx.respond(laughter)
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @commands.command(help="(floor, ceil): sends a random int between floor and ceil")
+    @slash_command(
+        name="random_int",
+        description="Based on 2 limits, returns a random number",
+        guild_ids=[978909341665079366],
+    )
     async def randint(self, ctx, floor, ceil):
-        await ctx.send(random.randint(int(floor), int(ceil)))
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    @say.error
-    async def say_error(self, ctx, error):
-        await ctx.send(error)
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    @sex.error
-    async def sex_error(self, ctx, error):
-        await ctx.send(error)
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    @randint.error
-    async def randint_error(self, ctx, error):
-        await ctx.send(error)
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    @laugh.error
-    async def laugh_error(self, ctx, error):
-        await ctx.send(error)
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    @ship.error
-    async def ship_error(self, ctx, error):
-        await ctx.send(error)
+        await ctx.respond(random.randint(int(floor), int(ceil)))
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
