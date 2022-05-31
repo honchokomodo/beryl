@@ -1,14 +1,14 @@
 import asyncio
+import json
 import math
 import random
 import time
 
-import orjson
 import uvloop
 from discord.ext import commands
 
 with open("mmmm_a_thicccyyy.json") as mmmm_a_thicccyyy:
-    data = orjson.loads(mmmm_a_thicccyyy.read())
+    data = json.loads(mmmm_a_thicccyyy.read())
 
 cooldown = {}
 countcooldown = 0

@@ -23,7 +23,12 @@ client = commands.Bot(command_prefix=".", intents=intents)
 status = "https://youtu.be/QPqf2coKBl8"
 
 # Loads all Cogs
-initial_extensions = ["Cogs.fun-stuff", "Cogs.useful-things", "Cogs.edictHelp"]
+initial_extensions = [
+    "Cogs.fun-stuff",
+    "Cogs.useful-things",
+    "Cogs.edictHelp",
+    "Cogs.xp",
+]
 for extension in initial_extensions:
     client.load_extension(extension)
 
