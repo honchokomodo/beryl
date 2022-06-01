@@ -19,7 +19,7 @@ logging.basicConfig(
 )
 
 prefixes = "beryl ", "Beryl ", "br "
-client = commands.Bot(command_prefix=["beryl", "Beryl", "br"], intents=intents)
+client = commands.Bot(command_prefix=["beryl ", "Beryl ", "br "], intents=intents)
 status = "https://youtu.be/QPqf2coKBl8"
 
 # Loads all Cogs
