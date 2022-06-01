@@ -1,3 +1,10 @@
+##----------------------------------------------------------------------##
+## Currently the XP cog has been superseded by the DisQuest cog.        ##
+## Since the XP cog uses JSON, concurrency is a major issue.            ##
+## DisQuest uses PostgreSQL, and requires you to first create the DB    ##
+## Instructions to set up the DB is in the README.md                    ##
+##----------------------------------------------------------------------##
+
 import asyncio
 import json
 import math

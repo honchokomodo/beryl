@@ -19,7 +19,7 @@ logging.basicConfig(
 )
 
 prefixes = "beryl ", "Beryl ", "br "
-client = commands.Bot(command_prefix=".", intents=intents)
+client = commands.Bot(command_prefix=["beryl", "Beryl", "br"], intents=intents)
 status = "https://youtu.be/QPqf2coKBl8"
 
 # Loads all Cogs
@@ -27,7 +27,8 @@ initial_extensions = [
     "Cogs.fun-stuff",
     "Cogs.useful-things",
     "Cogs.edictHelp",
-    "Cogs.xp",
+    # "Cogs.xp", # Superseded by DisQuest
+    "Cogs.disquest",
 ]
 for extension in initial_extensions:
     client.load_extension(extension)
