@@ -1,12 +1,16 @@
 import asyncio
 import datetime
+import json
+from pathlib import Path
 
 import orjson
-import uvloop
 from discord.ext import commands, tasks
 
-with open("mmmm_a_thicccyyy.json") as mmmm_a_thicccyyy:
-    data = orjson.loads(mmmm_a_thicccyyy.read())
+filePath = Path(r"/mnt/d/GitHub Repos [Local]/beryl/Bot/test.json")
+
+with open(filePath, "r") as mmmm_a_thicccyyy:
+    data = json.loads(mmmm_a_thicccyyy.read())
+print(data)
 
 
 def days_until(month, day):
@@ -67,19 +71,15 @@ class tasksUtils(commands.Cog):
             except KeyError:
                 pass
 
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    @tasks.loop()
+    @tasks.loop(seconds=3)
     async def every_minute(self):
         global cooldown
         while not self.bot.is_closed():
-            await asyncio.sleep(60)
+            await asyncio.sleep(3)
 
             cooldown = {}
             tasks = tasksUtils()
-            await tasks.cele()
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+            print(await tasks.cele())
 
     @tasks.loop()
     async def every_hour(self):
@@ -89,8 +89,6 @@ class tasksUtils(commands.Cog):
             f.write(orjson.dumps(data, indent=2))
             f.close()
             print("saved")
-
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 def setup(bot):

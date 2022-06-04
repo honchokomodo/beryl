@@ -11,7 +11,6 @@ load_dotenv()
 
 Token = os.getenv("Beryl_Keys")
 
-# PyCord should have slash cmds...
 logging.basicConfig(
     level=logging.INFO,
     format="[%(levelname)s] | %(asctime)s >> %(message)s",
@@ -27,8 +26,9 @@ initial_extensions = [
     "Cogs.fun-stuff",
     "Cogs.useful-things",
     "Cogs.edictHelp",
-    # "Cogs.xp", # Superseded by DisQuest
     "Cogs.disquest",
+    "Cogs.tasks",
+    "Cogs.events",
 ]
 for extension in initial_extensions:
     client.load_extension(extension)

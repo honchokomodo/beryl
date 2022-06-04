@@ -1,18 +1,25 @@
 import asyncio
 import datetime
+import logging
 import os
 import re
 
 import discord
 import ffmpeg
 import uvloop
-from discord.commands import Option, slash_command
+from discord.commands import Option, SlashCommandGroup, slash_command
 from discord.ext import commands
 
 # with open("mmmm_a_thicccyyy.json") as mmmm_a_thicccyyy:
 #     data = orjson.loads(mmmm_a_thicccyyy.read())
 # with open("penis_pleasure_18.json") as sensitive_things:
 #     keys = orjson.loads(sensitive_things.read())
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(levelname)s] | %(asctime)s >> %(message)s",
+    datefmt="[%m/%d/%Y] [%I:%M:%S %p %Z]",
+)
 
 
 def days_until(month, day):
@@ -34,7 +41,7 @@ countresponse = {}
 
 class usefulThings(commands.Cog):
     def __init__(self, bot):
-        self.bots = bot
+        self.bot = bot
 
     @slash_command(
         name="ffmpegcve", description="Apparently convert video files to mp4"
@@ -91,6 +98,29 @@ class usefulThings(commands.Cog):
             await ctx.respond(embed=embedError)
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+    @slash_command(
+        name="ping",
+        description="The Lag-o-meter, often lies",
+        guild_ids=[978909341665079366],
+    )
+    async def pingChecker(self, ctx):
+        embed = discord.Embed()
+        embed.description = f"Bot Latency: {round(self.bot.latency * 1000)}ms"
+        await ctx.respond(embed=embed)
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+
+class BerylEvents(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    berylEvents = SlashCommandGroup("events", "Commands for Beryl Events")
+
+    @berylEvents.command(name="list")
+    async def eventsList(self, ctx):
+        """Lists upcoming events"""
 
     # @commands.command(help="(): lists upcoming events")
     # async def events(self, ctx):
@@ -188,18 +218,6 @@ class usefulThings(commands.Cog):
 
     # asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    # @commands.command(help="(): the lagometer, often lies")
-    # async def ping(self, ctx):
-    #     t = await ctx.send(
-    #         f"from client.latency: {round(self.bot.latency * 1000)} (this number will probably be inaccurate)"
-    #     )
-    #     ms = (t.created_at - ctx.message.created_at).total_seconds() * 1000
-    #     await ctx.send(
-    #         f"from message.created_at: {round(ms)}. disclaimer: this command only gets my (honchokomodo) ping"
-    #     )
-
-    # asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
     # @commands.command(help="(path, action, value): does json things")
     # async def edict(self, ctx, path, action, *value):
     #     pathlist = path.split(">")
@@ -277,15 +295,6 @@ class usefulThings(commands.Cog):
     #     await ctx.send(error)
 
     # asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    # @commands.command(help="(): prints your level")
-    # async def level(self, ctx):
-    #     xp = data[f"{ctx.guild.id}"]["users"][f"{ctx.author.id}"]["xp"]
-    #     lv = math.floor(math.log(xp, 1.1))
-    #     dt = math.floor(1.1 ** (lv + 1) - xp)
-    #     await ctx.send(
-    #         f"you are level {lv} with {xp} xp. you need {dt} more xp (around {dt/1100000} mins/msgs) to level up"
-    #     )
 
     # asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
