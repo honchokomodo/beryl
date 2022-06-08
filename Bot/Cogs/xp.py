@@ -49,7 +49,8 @@ class xpUtils(commands.Cog):
         post_level = math.floor(math.log(post_xp, 1.1))
         if pre_level < post_level:
             try:
-                # Probably not a good idea to send level up                # If you are getting the bot verifed on discords.bots.gg
+                # Probably not a good idea to send level up                # If
+                # you are getting the bot verifed on discords.bots.gg
                 channel = self.bot.get_channel(int(data[guild_id]["levelchannel"]))
                 await channel.send(
                     f"congrats **{ctx.author.name}** you are now level **{post_level}** with **{post_xp}** xp"

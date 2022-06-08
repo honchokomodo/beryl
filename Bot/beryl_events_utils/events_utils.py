@@ -5,7 +5,6 @@ import motor.motor_asyncio
 import uvloop
 from beanie import Document, init_beanie
 from dotenv import load_dotenv
-from pydantic import BaseModel
 
 load_dotenv()
 
@@ -26,14 +25,6 @@ class Events(Document):
     name: str
     description: str
     passed: bool
-
-
-class EventUpdateProject(BaseModel):
-    name: str
-    description: str
-    month: int
-    day: int
-    year: int
 
 
 class BerylEventsUtils:
