@@ -1,37 +1,18 @@
 import asyncio
-import datetime
-import logging
 import os
 import re
 
+import aiohttp
 import discord
 import ffmpeg
+import orjson
+import simdjson
 import uvloop
 from discord.commands import Option, slash_command
 from discord.ext import commands
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(levelname)s] | %(asctime)s >> %(message)s",
-    datefmt="[%m/%d/%Y] [%I:%M:%S %p %Z]",
-)
-
-
-def days_until(month, day):
-    try:
-        today = datetime.date.today()
-        year = today.year
-        dt = datetime.date(year, month, day) - today
-        if 0 <= dt.days:
-            return dt.days
-        return (datetime.date(year + 1, month, day) - today).days
-    except TypeError:
-        return 999
-
-
-cooldown = {}
-countcooldown = 0
-countresponse = {}
+parser = simdjson.Parser()
+hypixel_api_key = os.getenv("Hypixel_API_Key")
 
 
 class usefulThings(commands.Cog):
@@ -106,45 +87,32 @@ class usefulThings(commands.Cog):
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    # @commands.command(
-    #     help='(path, action=print): hypixel api things. action can also be "keys"'
-    # )
-    # async def dump_count(self, ctx, path, action="print"):
-    #     global countresponse, countcooldown
-
-    #     if time.time() >= countcooldown + 60:
-    #         # please use aiohttp for this instead
-    #         r = requests.get(
-    #             "https://api.hypixel.net/counts?key=" + keys["hypixelapikey"]
-    #         )
-    #         countcooldown = time.time()
-    #         countresponse = orjson.loads(r.text)
-
-    #     pathlist = path.split(">")
-    #     a_key = countresponse
-    #     if path != "self":
-    #         for i in pathlist[0:-1]:
-    #             a_key = a_key[i]
-    #     else:
-    #         pathlist = ["a"]
-    #         a_key = {"a": countresponse}
-
-    #     response = ""
-
-    #     if action == "print":
-    #         response = a_key[pathlist[-1]]
-    #     if action == "keys":
-    #         response = [i for i in a_key[pathlist[-1]]]
-
-    #     await ctx.send(f"```json\n{orjson.dumps(response, indent=2)}\n```")
-
-    # asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
-    # @dump_count.error
-    # async def dump_count_error(self, ctx, error):
-    #     await ctx.send(error)
-
-    # asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    @slash_command(
+        name="hypixel-count",
+        description="Returns the amount of players in each game server",
+        guild_ids=[978909341665079366],
+    )
+    async def player_count(self, ctx):
+        async with aiohttp.ClientSession(json_serialize=orjson.dumps) as session:
+            params = {"key": hypixel_api_key}
+            async with session.get(
+                "https://api.hypixel.net/counts", params=params
+            ) as response:
+                status = await response.content.read()
+                statusMain = parser.parse(status, recursive=True)
+                try:
+                    embedVar = discord.Embed(
+                        title="Games Player Count",
+                        color=discord.Color.from_rgb(186, 193, 255),
+                    )
+                    for k, v in statusMain["games"].items():
+                        embedVar.add_field(name=k, value=v["players"], inline=True)
+                    await ctx.respond(embed=embedVar)
+                except Exception as e:
+                    embedVar = discord.Embed()
+                    embedVar.description = "The command broke. Please try again."
+                    embedVar.add_field(name="Reason", value=str(e), inline=False)
+                    await ctx.respond(embed=embedVar)
 
 
 def setup(bot):

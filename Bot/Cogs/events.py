@@ -67,21 +67,37 @@ class BerylEvents(commands.Cog):
         """Views all events for your user"""
         user_id = ctx.author.id
         items = await eventUtils.listAll(user_id=user_id)
-        mainPages = pages.Paginator(
-            pages=[
-                discord.Embed(
-                    title=dict(mainItem)["name"],
-                    description=dict(mainItem)["description"],
+        try:
+            if items is None:
+                raise TypeError
+            else:
+                mainPages = pages.Paginator(
+                    pages=[
+                        discord.Embed(
+                            title=dict(mainItem)["name"],
+                            description=dict(mainItem)["description"],
+                        )
+                        .add_field(
+                            name="Month", value=dict(mainItem)["month"], inline=True
+                        )
+                        .add_field(name="Day", value=dict(mainItem)["day"], inline=True)
+                        .add_field(
+                            name="Passed", value=dict(mainItem)["passed"], inline=True
+                        )
+                        .add_field(
+                            name="Date Added", value=dict(mainItem)["date"], inline=True
+                        )
+                        .add_field(
+                            name="UUID", value=dict(mainItem)["uuid"], inline=True
+                        )
+                        for mainItem in items
+                    ]
                 )
-                .add_field(name="Month", value=dict(mainItem)["month"], inline=True)
-                .add_field(name="Day", value=dict(mainItem)["day"], inline=True)
-                .add_field(name="Passed", value=dict(mainItem)["passed"], inline=True)
-                .add_field(name="Date Added", value=dict(mainItem)["date"], inline=True)
-                .add_field(name="UUID", value=dict(mainItem)["uuid"], inline=True)
-                for mainItem in items
-            ]
-        )
-        await mainPages.respond(ctx.interaction, ephemeral=False)
+                await mainPages.respond(ctx.interaction, ephemeral=False)
+        except TypeError:
+            embedTypeError = discord.Embed()
+            embedTypeError.description = "No events found. Please try again"
+            await ctx.respond(embed=embedTypeError)
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -90,34 +106,42 @@ class BerylEvents(commands.Cog):
         """Checks how much days there is left before the event takes place"""
         uid = ctx.author.id
         itemsOne = await eventUtils.findEntry(user_id=uid, name=name)
-        for items3 in itemsOne:
-            eventDate = date(
-                dict(items3)["year"], dict(items3)["month"], dict(items3)["day"]
-            )
-            diff = eventDate - dateToday
-            monthObj = datetime.strptime(str(eventDate.month), "%m")
-            monthName = monthObj.strftime("%B")
-        pagesMain = pages.Paginator(
-            pages=[
-                discord.Embed(
-                    title=dict(mainItem)["name"],
-                    description=dict(mainItem)["description"],
+        try:
+            if itemsOne is None:
+                raise TypeError
+            else:
+                for items3 in itemsOne:
+                    eventDate = date(
+                        dict(items3)["year"], dict(items3)["month"], dict(items3)["day"]
+                    )
+                    diff = eventDate - dateToday
+                    monthObj = datetime.strptime(str(eventDate.month), "%m")
+                    monthName = monthObj.strftime("%B")
+                pagesMain = pages.Paginator(
+                    pages=[
+                        discord.Embed(
+                            title=dict(mainItem)["name"],
+                            description=dict(mainItem)["description"],
+                        )
+                        .add_field(name="Days Remaining", value=diff.days, inline=True)
+                        .add_field(name="Event Date", value=eventDate, inline=True)
+                        .add_field(
+                            name="Event Date (Full)",
+                            value=f"{monthName} {eventDate.day}, {eventDate.year}",
+                            inline=True,
+                        )
+                        for mainItem in itemsOne
+                    ]
                 )
-                .add_field(name="Days Remaining", value=diff.days, inline=True)
-                .add_field(name="Event Date", value=eventDate, inline=True)
-                .add_field(
-                    name="Event Date (Full)",
-                    value=f"{monthName} {eventDate.day}, {eventDate.year}",
-                    inline=True,
-                )
-                for mainItem in itemsOne
-            ]
-        )
-        await pagesMain.respond(ctx.interaction, ephemeral=False)
+                await pagesMain.respond(ctx.interaction, ephemeral=False)
+        except TypeError:
+            embedTypeError = discord.Embed()
+            embedTypeError.description = "No events found. Please try again"
+            await ctx.respond(embed=embedTypeError)
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @berylEvents.command(name="Update")
+    @berylEvents.command(name="update")
     async def updateEvent(
         self,
         ctx,
@@ -143,6 +167,13 @@ class BerylEvents(commands.Cog):
         await ctx.respond("The entry has been updated")
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+    @berylEvents.command(name="delete")
+    async def deleteEvent(self, ctx, name: Option(str, "The name of the event")):
+        """Deletes an event"""
+        user_id = ctx.author.id
+        await eventUtils.removeEvent(uid=user_id, name=name)
+        await ctx.respond("The entry has been deleted")
 
 
 def setup(bot):

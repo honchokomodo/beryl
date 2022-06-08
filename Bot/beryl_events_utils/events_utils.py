@@ -5,6 +5,7 @@ import motor.motor_asyncio
 import uvloop
 from beanie import Document, init_beanie
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -24,6 +25,13 @@ class Events(Document):
     year: int
     name: str
     description: str
+    passed: bool
+
+
+class EventsProjectDates(BaseModel):
+    month: int
+    day: int
+    year: int
     passed: bool
 
 
@@ -133,5 +141,44 @@ class BerylEventsUtils:
         mainUpdate.day = day
         mainUpdate.year = year
         await mainUpdate.save()
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+    async def findProjection(self):
+        """Finds projected values"""
+        clientProjection = motor.motor_asyncio.AsyncIOMotorClient(
+            f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_IP}:{MONGODB_PORT}"
+        )
+        await init_beanie(
+            database=clientProjection.beryl_events, document_models=[Events]
+        )
+        return await Events.find_all().project(EventsProjectDates).to_list()
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+    async def setEventPassed(self):
+        """Sets the event as passed"""
+        clientPassed = motor.motor_asyncio.AsyncIOMotorClient(
+            f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_IP}:{MONGODB_PORT}"
+        )
+        await init_beanie(database=clientPassed.beryl_events, document_models=[Events])
+        mainPassed = Events.find(Events.passed == False)
+        mainPassed.passed = True
+        await mainPassed.save()
+
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+    async def removeEvent(self, uid: int, name: str):
+        """Removes an event from the database
+
+        Args:
+            uid (int): Discord User's ID
+            name (str): Name of the event
+        """
+        clientRmEvent = motor.motor_asyncio.AsyncIOMotorClient(
+            f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@{MONGO_IP}:{MONGODB_PORT}"
+        )
+        await init_beanie(database=clientRmEvent.beryl_events, document_models=[Events])
+        await Events.find(Events.author_id == uid, Events.name == name).delete()
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())

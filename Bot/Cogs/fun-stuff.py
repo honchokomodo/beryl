@@ -76,7 +76,9 @@ class fun_stuff(commands.Cog):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
     @slash_command(name="laugh", description="Laughs", guild_ids=[978909341665079366])
-    async def laughingAtSomeone(self, ctx, length=16):
+    async def laughingAtSomeone(
+        self, ctx, length: Option(int, "The length of the laugh")
+    ):
         laughter = "".join(
             [random.choice("ASDFGHJKL") for _ in range(min(length, 2001))]
         )

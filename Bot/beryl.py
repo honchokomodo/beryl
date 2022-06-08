@@ -25,10 +25,10 @@ status = "https://youtu.be/QPqf2coKBl8"
 initial_extensions = [
     "Cogs.fun-stuff",
     "Cogs.useful-things",
-    "Cogs.edictHelp",
     # "Cogs.disquest", # debug without postgres if needed
-    "Cogs.tasks",
+    # "Cogs.tasks",
     "Cogs.events",
+    "Cogs.task-test",
 ]
 for extension in initial_extensions:
     client.load_extension(extension)

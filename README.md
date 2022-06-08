@@ -1,21 +1,6 @@
-# beryl
-a discord bot
+# Beryl
 
-please ignore the really bad filenames
-
-the json files are just examples
-
-todo:
-
-change daycountdown to datetimedelta
-
-de-ugly the code
-
-add type hinting?
-
-remove dependency security vulnerability in Pipfile.lock notification
-
-Change from json storage to db storage???
+a discord bot...
 
 ## DisQuest Setup
 

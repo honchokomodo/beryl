@@ -16,10 +16,9 @@ MONGODB_PORT = os.getenv("MongoDB_Port")
 
 async def main():
     # print(await eventUtils.ins(343, 5453, 4, 4, "test", "test3", False))
-    items = await eventUtils.listAll(454357482102587393)
-    print(items)
-    for mainItem in items:
-        print(dict(mainItem)["name"])
+    mainRes = await eventUtils.findProjection()
+    for res in mainRes:
+        print(dict(res))
 
 
 asyncio.run(main())
