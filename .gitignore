@@ -10,3 +10,4 @@ package*
 .vscode
 .idea
 __pycache__
+test.py

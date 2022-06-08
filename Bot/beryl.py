@@ -26,7 +26,7 @@ initial_extensions = [
     "Cogs.fun-stuff",
     "Cogs.useful-things",
     "Cogs.edictHelp",
-    "Cogs.disquest",
+    # "Cogs.disquest", # debug without postgres if needed
     "Cogs.tasks",
     "Cogs.events",
 ]
