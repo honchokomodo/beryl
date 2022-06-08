@@ -61,11 +61,7 @@ class DisQuest(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash_command(
-        name="mylvl",
-        description="Displays your activity level!",
-        guild_ids=[978909341665079366],
-    )
+    @slash_command(name="mylvl", description="Displays your activity level!")
     async def mylvl(self, ctx):
         try:
             xp = await user.getxp(ctx.user.id, ctx.guild.id)
@@ -87,9 +83,7 @@ class DisQuestV2(commands.Cog):
         self.bot = bot
 
     @slash_command(
-        name="rank",
-        description="Displays the most active members of your server!",
-        guild_ids=[978909341665079366],
+        name="rank", description="Displays the most active members of your server!"
     )
     async def rank(self, ctx):
         gid = ctx.guild.id
@@ -130,7 +124,6 @@ class DisQuestV3(commands.Cog):
     @slash_command(
         name="globalrank",
         description="Displays the most active members of all servers that this bot is connected to!",
-        guild_ids=[978909341665079366],
     )
     async def grank(self, ctx):
         meta = MetaData()
@@ -190,9 +183,7 @@ class DisQuestV5(commands.Cog):
         self.bot = bot
 
     @slash_command(
-        name="disquest-init",
-        description="Initializes the database for DisQuest!",
-        guild_ids=[978909341665079366],
+        name="disquest-init", description="Initializes the database for DisQuest!"
     )
     async def disquestInit(self, ctx):
         embed = discord.Embed()

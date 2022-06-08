@@ -18,11 +18,7 @@ class fun_stuff(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash_command(
-        name="ship",
-        description="Calcuates how much love a person has",
-        guild_ids=[978909341665079366],
-    )
+    @slash_command(name="ship", description="Calcuates how much love a person has")
     async def shipPerson(
         self,
         ctx,
@@ -46,9 +42,7 @@ class fun_stuff(commands.Cog):
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @slash_command(
-        name="sex", description="it's a sex calculator", guild_ids=[978909341665079366]
-    )
+    @slash_command(name="sex", description="it's a sex calculator")
     async def havingSex(
         self, ctx, person: Option(str, "The person who would want to be submissive")
     ):
@@ -66,16 +60,14 @@ class fun_stuff(commands.Cog):
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @slash_command(
-        name="say", description="Says something", guild_ids=[978909341665079366]
-    )
+    @slash_command(name="say", description="Says something")
     async def sayTheWord(self, ctx, things: Option(str, "The word or phrase to say")):
         logging.info(f"{ctx.author.name} used say with arg {things}")
         await ctx.respond(things.replace("@", ""))
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @slash_command(name="laugh", description="Laughs", guild_ids=[978909341665079366])
+    @slash_command(name="laugh", description="Laughs")
     async def laughingAtSomeone(
         self, ctx, length: Option(int, "The length of the laugh")
     ):
@@ -87,9 +79,7 @@ class fun_stuff(commands.Cog):
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
     @slash_command(
-        name="random_int",
-        description="Based on 2 limits, returns a random number",
-        guild_ids=[978909341665079366],
+        name="random_int", description="Based on 2 limits, returns a random number"
     )
     async def randint(self, ctx, floor, ceil):
         await ctx.respond(random.randint(int(floor), int(ceil)))

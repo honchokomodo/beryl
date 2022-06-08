@@ -75,11 +75,7 @@ class usefulThings(commands.Cog):
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @slash_command(
-        name="ping",
-        description="The Lag-o-meter, often lies",
-        guild_ids=[978909341665079366],
-    )
+    @slash_command(name="ping", description="The Lag-o-meter, often lies")
     async def pingChecker(self, ctx):
         embed = discord.Embed()
         embed.description = f"Bot Latency: {round(self.bot.latency * 1000)}ms"
@@ -90,7 +86,6 @@ class usefulThings(commands.Cog):
     @slash_command(
         name="hypixel-count",
         description="Returns the amount of players in each game server",
-        guild_ids=[978909341665079366],
     )
     async def player_count(self, ctx):
         async with aiohttp.ClientSession(json_serialize=orjson.dumps) as session:

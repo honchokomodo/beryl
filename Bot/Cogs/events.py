@@ -25,9 +25,7 @@ class BerylEvents(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    berylEvents = SlashCommandGroup(
-        "events", "Commands for Beryl Events", guild_ids=[978909341665079366]
-    )
+    berylEvents = SlashCommandGroup("events", "Commands for Beryl Events")
 
     @berylEvents.command(name="add")
     async def eventsList(
