@@ -17,7 +17,7 @@ requests = "^2.27.1"
 pysimdjson = "^4.0.3"
 disquest-utils = "^1.0.4"
 ffmpeg-python = "^0.2.0"
-beanie = "1.11.1"
+beryl-events-utils = "^1.0.2"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.19.0"
