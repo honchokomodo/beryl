@@ -2,6 +2,6 @@
 
 a discord bot...
 
-## DB Setup
+## Contributing
 
-All DB setup instructions are within the `db-setup.md` file.
+All instructions for new contributions are located within the `contributing.md` file
