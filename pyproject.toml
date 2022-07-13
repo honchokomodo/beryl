@@ -6,7 +6,7 @@ authors = ["No767 <73260931+No767@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-py-cord = {version = "2.0.0rc1", extras = ["voice"]}
+py-cord = {version = "2.0.0", extras = ["voice"]}
 orjson = "^3.6.8"
 aiodns = "^3.0.0"
 brotlipy = "^0.7.0"
@@ -14,7 +14,7 @@ cchardet = "^2.1.7"
 python-dotenv = "^0.20.0"
 uvloop = "^0.16.0"
 requests = "^2.27.1"
-pysimdjson = "^4.0.3"
+pysimdjson = "^5.0.1"
 disquest-utils = "^1.0.4"
 ffmpeg-python = "^0.2.0"
 beryl-events-utils = "^1.0.2"
