@@ -9,3 +9,6 @@ package*
 .env
 .vscode
 .idea
+__pycache__
+test.py
+docker-compose.yml

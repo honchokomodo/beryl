@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  beryl:
+    container_name: Beryl
+    build:
+      context: .
+      args:
+        - PM2_PUBLIC_KEY_INGEST=public_key
+        - PM2_SECRET_KEY_INGEST=secret_key
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 0s
+        max_attempts: 3
+        window: 120s
+      mode: replicated
+    
+  postgres:
+    container_name: Beryl-Postgres
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=Beryl
+      - POSTGRES_DB=Beryl
+    volumes:
+      - beryl_postgres_volume:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  beryl_postgres_volume:
