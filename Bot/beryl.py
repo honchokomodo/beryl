@@ -17,7 +17,6 @@ logging.basicConfig(
     datefmt="[%m/%d/%Y] [%I:%M:%S %p %Z]",
 )
 
-prefixes = "beryl ", "Beryl ", "br "
 client = commands.Bot(command_prefix=["beryl ", "Beryl ", "br "], intents=intents)
 status = "https://youtu.be/QPqf2coKBl8"
 
@@ -25,8 +24,8 @@ status = "https://youtu.be/QPqf2coKBl8"
 initial_extensions = [
     "Cogs.fun-stuff",
     "Cogs.useful-things",
-    "Cogs.disquest",  # debug without postgres if needed
-    "Cogs.tasks",
+    # "Cogs.disquest",  # debug without postgres if needed
+    "Cogs.event_tasks",
     "Cogs.events",
 ]
 for extension in initial_extensions:

@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import os
 import random
 
@@ -22,12 +21,6 @@ DATABASE = os.getenv("Postgres_Database")
 PORT = os.getenv("Postgres_Port")
 
 user = DisQuestUsers()
-
-logging.basicConfig(
-    level=logging.WARNING,
-    format="[%(levelname)s] | %(asctime)s >> %(message)s",
-    datefmt="[%m/%d/%Y] [%I:%M:%S %p %Z]",
-)
 
 
 class View(discord.ui.View):
@@ -171,9 +164,7 @@ class DisQuestV4(commands.Cog):
         try:
             await user.addxp(reward, ctx.author.id, ctx.guild.id)
         except TypeError:
-            logging.error(
-                f"[{ctx.author.name}#{ctx.author.discriminator} - {ctx.guild}] User has not initialized DisQuest account"
-            )
+            pass
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 

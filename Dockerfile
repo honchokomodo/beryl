@@ -25,7 +25,7 @@ RUN apt-get update \
   && apt-get install -y curl \
   && apt-get -y autoclean
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION lts
+ENV NODE_VERSION 16.16.0
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 RUN source $NVM_DIR/nvm.sh \
   && nvm install $NODE_VERSION \
@@ -36,9 +36,12 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 RUN npm install -g npm pm2@latest
 
 FROM install_node AS install_poetry
-RUN python -m pip install --upgrade pipx
-RUN python -m pipx ensurepath
-RUN python -m pipx install poetry
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+RUN python -m pip install --upgrade pip setuptools wheel
+RUN apt-get install netcat -y --no-install-recommends
+RUN curl -sSL https://install.python-poetry.org | python -
+ENV PATH="${PATH}:/root/.local/bin"
 
 FROM install_poetry AS prod_deployment
 WORKDIR /
@@ -54,4 +57,4 @@ ARG PM2_PUBLIC_KEY_INGEST
 ARG PM2_SECRET_KEY_INGEST
 ENV PM2_PUBLIC_KEY=${PM2_PUBLIC_KEY_INGEST}
 ENV PM2_SECRET_KEY=${PM2_SECRET_KEY_INGEST}
-CMD ["pm2-runtime", "cd /Beryl/ && poetry install && poetry run python /Beryl/Bot/beryl.py", "--name", "Beryl"]
+CMD ["pm2-runtime", "cd /Beryl/ && poetry run python /Beryl/Bot/beryl.py", "--name", "Beryl"]
