@@ -1,5 +1,6 @@
 # Pulled directly from Rin
 FROM ubuntu:22.04 as install_python
+ENV DEBIAN_FRONTEND=noninteractive 
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends make build-essential 
 RUN apt-get install libssl-dev zlib1g-dev libbz2-dev libreadline-dev  -y --no-install-recommends
@@ -33,13 +34,15 @@ RUN source $NVM_DIR/nvm.sh \
   && nvm use default
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-RUN npm install -g npm pm2@latest
+RUN npm install --location=global npm
+RUN npm install --location=global pm2@latest
 
 FROM install_node AS install_poetry
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 RUN python -m pip install --upgrade pip setuptools wheel
 RUN apt-get install netcat -y --no-install-recommends
+RUN apt-get -y autoclean
 RUN curl -sSL https://install.python-poetry.org | python -
 ENV PATH="${PATH}:/root/.local/bin"
 
