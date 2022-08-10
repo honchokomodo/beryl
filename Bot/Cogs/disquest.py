@@ -58,12 +58,8 @@ class DisQuest(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    disquest = SlashCommandGroup(
-        "disquest", "Commands for Disquest", guild_ids=[978909341665079366]
-    )
-    disquestRank = disquest.create_subgroup(
-        "rank", "Commands for Disquest", guild_ids=[978909341665079366]
-    )
+    disquest = SlashCommandGroup("disquest", "Commands for Disquest")
+    disquestRank = disquest.create_subgroup("rank", "Commands for Disquest")
 
     @disquest.command(name="mylvl")
     async def mylvl(self, ctx):
