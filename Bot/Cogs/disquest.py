@@ -1,16 +1,14 @@
 import asyncio
 import os
 import random
+import uuid
 
 import discord
 import uvloop
-from discord.commands import slash_command
+from discord.commands import SlashCommandGroup
 from discord.ext import commands
 from disquest_utils import DisQuestUsers, lvl
 from dotenv import load_dotenv
-from sqlalchemy import (BigInteger, Column, Integer, MetaData, Table, func,
-                        select)
-from sqlalchemy.ext.asyncio import create_async_engine
 
 load_dotenv()
 
@@ -19,6 +17,7 @@ IP = os.getenv("Postgres_IP")
 USER = os.getenv("Postgres_User")
 DATABASE = os.getenv("Postgres_Database")
 PORT = os.getenv("Postgres_Port")
+CONNECTION_URI = f"postgresql+asyncpg://{USER}:{PASSWORD}@{IP}:{PORT}/{DATABASE}"
 
 user = DisQuestUsers()
 
@@ -35,7 +34,12 @@ class View(discord.ui.View):
         emoji=discord.PartialEmoji.from_str("<:check:314349398811475968>"),
     )
     async def button_callback(self, button, interaction):
-        await user.onInit(interaction.user.id, interaction.guild_id)
+        await user.insUser(
+            user_uuid=str(uuid.uuid4()),
+            user_id=interaction.user.id,
+            guild_id=interaction.guild_id,
+            uri=CONNECTION_URI,
+        )
         await interaction.response.send_message(
             "Confirmed. Now you can compete for higher scores! "
         )
@@ -54,14 +58,30 @@ class DisQuest(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @slash_command(name="mylvl", description="Displays your activity level!")
+    disquest = SlashCommandGroup(
+        "disquest", "Commands for Disquest", guild_ids=[978909341665079366]
+    )
+    disquestRank = disquest.create_subgroup(
+        "rank", "Commands for Disquest", guild_ids=[978909341665079366]
+    )
+
+    @disquest.command(name="mylvl")
     async def mylvl(self, ctx):
+        """Displays your activity level!"""
         try:
-            xp = await user.getxp(ctx.user.id, ctx.guild.id)
+            xp = await user.getUserXP(
+                user_id=ctx.user.id, guild_id=ctx.guild.id, uri=CONNECTION_URI
+            )
             embedVar = discord.Embed(color=discord.Color.from_rgb(255, 217, 254))
             embedVar.add_field(name="User", value=f"{ctx.author.mention}", inline=True)
-            embedVar.add_field(name="LVL", value=f"{lvl.cur(xp)}", inline=True)
-            embedVar.add_field(name="XP", value=f"{xp}/{lvl.next(xp)*100}", inline=True)
+            embedVar.add_field(
+                name="LVL", value=f"{lvl.cur(dict(xp)['xp'])}", inline=True
+            )
+            embedVar.add_field(
+                name="XP",
+                value=f"{dict(xp)['xp']}/{lvl.next(dict(xp)['xp'])*100}",
+                inline=True,
+            )
             await ctx.respond(embed=embedVar)
         except TypeError:
             embedError = discord.Embed()
@@ -70,89 +90,49 @@ class DisQuest(commands.Cog):
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
+    @disquest.command(name="init")
+    async def disquestInit(self, ctx):
+        """Initializes the database for DisQuest!"""
+        embed = discord.Embed()
+        embed.description = "Do you wish to initialize your DisQuest account? This is completely optional. Click on the buttons to confirm"
+        await ctx.respond(embed=embed, view=View())
 
-class DisQuestV2(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-    @slash_command(
-        name="rank", description="Displays the most active members of your server!"
-    )
+    @disquestRank.command(name="local")
     async def rank(self, ctx):
-        gid = ctx.guild.id
-        meta = MetaData()
-        engine = create_async_engine(
-            f"postgresql+asyncpg://{USER}:{PASSWORD}@{IP}:{PORT}/{DATABASE}"
+        """Displays the most active members of your server!"""
+        getUserRank = await user.userLocalRank(
+            guild_id=ctx.guild.id, uri=CONNECTION_URI
         )
-        users = Table(
-            "users",
-            meta,
-            Column("id", BigInteger),
-            Column("gid", BigInteger),
-            Column("xp", Integer),
-        )
-        async with engine.connect() as conn:
-            s = (
-                select(Column("id", BigInteger), Column("xp", Integer))
-                .where(users.c.gid == gid)
-                .order_by(users.c.xp.desc())
-            )
-            results = await conn.execute(s)
-            members = list(results.fetchall())
-            for i, mem in enumerate(members):
-                members[
-                    i
-                ] = f"{i}. {(await self.bot.fetch_user(mem[0])).name} | XP. {mem[1]}\n"
-            embedVar = discord.Embed(color=discord.Color.from_rgb(254, 255, 217))
-            embedVar.description = f"**Server Rankings**\n{''.join(members)}"
-            await ctx.respond(embed=embedVar)
+        for i, items in enumerate(getUserRank):
+            getUserInfo = await self.bot.get_or_fetch_user(dict(items)["user_id"])
+            getUserRank[
+                i
+            ] = f"{i}. {getUserInfo.display_name} | XP. {dict(items)['xp']}\n"
+        embedVar = discord.Embed(color=discord.Color.from_rgb(254, 255, 217))
+        embedVar.description = f"**Server Rankings**\n{''.join(list(getUserRank))}"
+        await ctx.respond(embed=embedVar)
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
-
-class DisQuestV3(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
-    @slash_command(
-        name="globalrank",
-        description="Displays the most active members of all servers that this bot is connected to!",
-    )
+    @disquestRank.command(name="global")
     async def grank(self, ctx):
-        meta = MetaData()
-        engine = create_async_engine(
-            f"postgresql+asyncpg://{USER}:{PASSWORD}@{IP}:{PORT}/{DATABASE}"
-        )
-        users = Table(
-            "users",
-            meta,
-            Column("id", BigInteger),
-            Column("gid", BigInteger),
-            Column("xp", Integer),
-        )
-        async with engine.connect() as conn:
-            s = (
-                select(Column("id", Integer), func.sum(users.c.xp).label("txp"))
-                .group_by(users.c.id)
-                .group_by(users.c.xp)
-                .order_by(users.c.xp.desc())
-                .limit(10)
-            )
-            results = await conn.execute(s)
-            results_fetched = results.fetchall()
-            members = list(results_fetched)
-            for i, mem in enumerate(members):
-                members[
-                    i
-                ] = f"{i}. {(await self.bot.fetch_user(mem[0])).name} | XP. {mem[1]}\n"
-            embedVar = discord.Embed(color=discord.Color.from_rgb(217, 255, 251))
-            embedVar.description = f"**Global Rankings**\n{''.join(members)}"
-            await ctx.respond(embed=embedVar)
+        """Displays the most active members of all servers that this bot is connected to!"""
+        getGlobalRank = await user.globalRank(uri=CONNECTION_URI)
+        for i, items in enumerate(getGlobalRank):
+            getUserInfo = await self.bot.get_or_fetch_user(dict(items)["user_id"])
+            getGlobalRank[
+                i
+            ] = f"{i}. {getUserInfo.display_name} | XP. {dict(items)['xp']}\n"
+        embedVar = discord.Embed(color=discord.Color.from_rgb(217, 255, 251))
+        embedVar.description = f"**Global Rankings**\n{''.join(list(getGlobalRank))}"
+        await ctx.respond(embed=embedVar)
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
-class DisQuestV4(commands.Cog):
+class DisQuestListener(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -162,29 +142,18 @@ class DisQuestV4(commands.Cog):
             return
         reward = random.randint(0, 20)
         try:
-            await user.addxp(reward, ctx.author.id, ctx.guild.id)
+            await user.addxp(
+                offset=reward,
+                user_id=ctx.author.id,
+                guild_id=ctx.guild.id,
+                uri=CONNECTION_URI,
+            )
         except TypeError:
             pass
 
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
-class DisQuestV5(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
-
-    @slash_command(
-        name="disquest-init", description="Initializes the database for DisQuest!"
-    )
-    async def disquestInit(self, ctx):
-        embed = discord.Embed()
-        embed.description = "Do you wish to initialize your DisQuest account? This is completely optional. Click on the buttons to confirm"
-        await ctx.respond(embed=embed, view=View())
-
-
 def setup(bot):
     bot.add_cog(DisQuest(bot))
-    bot.add_cog(DisQuestV2(bot))
-    bot.add_cog(DisQuestV3(bot))
-    bot.add_cog(DisQuestV4(bot))
-    bot.add_cog(DisQuestV5(bot))
+    bot.add_cog(DisQuestListener(bot))

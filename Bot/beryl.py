@@ -1,12 +1,15 @@
 import logging
 import os
+from pathlib import Path
 
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
+# Set up needed intents
 intents = discord.Intents.default()
 intents.message_content = True
+
 load_dotenv()
 
 Token = os.getenv("Beryl_Keys")
@@ -21,15 +24,11 @@ client = commands.Bot(command_prefix=["beryl ", "Beryl ", "br "], intents=intent
 status = "https://youtu.be/QPqf2coKBl8"
 
 # Loads all Cogs
-initial_extensions = [
-    "Cogs.fun-stuff",
-    "Cogs.useful-things",
-    # "Cogs.disquest",  # debug without postgres if needed
-    "Cogs.event_tasks",
-    "Cogs.events",
-]
-for extension in initial_extensions:
-    client.load_extension(extension)
+path = Path(__file__).parents[0]
+cogsList = os.listdir(os.path.join(path, "Cogs"))
+for items in cogsList:
+    if items.endswith(".py"):
+        client.load_extension(f"Cogs.{items[:-3]}")
 
 
 @client.event

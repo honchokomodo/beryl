@@ -12,3 +12,5 @@ package*
 __pycache__
 test.py
 docker-compose.yml
+file-test.py
+run.sh
