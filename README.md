@@ -1,16 +1,7 @@
-# beryl
-a discord bot
+# Beryl
 
-please ignore the really bad filenames
+a discord bot...
 
-the json files are just examples
+## Contributing
 
-todo:
-
-change daycountdown to datetimedelta
-
-de-ugly the code
-
-add type hinting?
-
-remove dependency security vulnerability in Pipfile.lock notification
+All instructions for new contributions are located within the `contributing.md` file
